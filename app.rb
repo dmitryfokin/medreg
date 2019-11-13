@@ -3,6 +3,18 @@ require 'sinatra'
 require "json"
 require 'open-uri'
 
+def getHashDoctor
+  h = {
+      'person_id' => '',
+      'displayName' => '',
+      'type_name' => '',
+      'room' => '',
+      'photo' => '',
+      'rating' => '',
+  }
+
+end
+
 configure do
   enable :sessions
 end
@@ -38,11 +50,33 @@ get '/gettest' do
   end
 
   med_3801661 = JSON.load(jsonText)
+  pediatrics = { 'pediatrics' => [] }
 
-  specs = med_3801661['specs']
-  pediatrics = {'pediatrics' => specs['Педиатрия']}
+  med_3801661['specs']['Педиатрия'].each do |item|
 
-  #pediatrics = {'test' => 'test'}
+    doctor = getHashDoctor
+    doctor.each {|key, value| doctor[key] = item[key] if (item[key])}
+    doctor['schedule'] = []
+
+    item['schedule'].each do |itemSchedule|
+
+      scheduleDay = {}
+      scheduleDay['date'] = itemSchedule['date']
+      scheduleDay['day'] = itemSchedule['formatting']['day']
+      scheduleDay['dateStr'] = itemSchedule['formatting']['date']
+      scheduleDay['time_from'] = itemSchedule['time_from']
+      scheduleDay['time_to'] = itemSchedule['time_to']
+      scheduleDay['name'] = itemSchedule['docBusyType']['name']
+      scheduleDay['code'] = itemSchedule['docBusyType']['code']
+      scheduleDay['count_tickets'] = itemSchedule['count_tickets']
+
+      doctor['schedule'] << scheduleDay
+    end
+
+    pediatrics['pediatrics'] << doctor
+
+  end
+
   return JSON(pediatrics)
 end
 
