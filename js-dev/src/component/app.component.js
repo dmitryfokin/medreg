@@ -5,11 +5,11 @@ export class AppComponent extends Component{
 
   constructor(id) {
     super(id);
-    this.listDoctor = new ListDoctorComponent()
+    this.listDoctor = new ListDoctorComponent('list-doctors')
   }
 
   init() {
     this.show()
-    //this.listDoctor.show()
+    this.listDoctor.show()
   }
 }
